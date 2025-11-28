@@ -128,3 +128,9 @@ while True:
     pygame.display.flip()
     rellotge.tick(FPS)
     frame += 1
+
+def actualitza_objectes():
+    pass
+
+def dibuixa_objectes():
+    pass
