@@ -1,11 +1,12 @@
 import pygame
 import sys
 import random
+import time
 
 # Inicialització de Pygame
 pygame.init()
 
-# --- Configuració ---
+# --- Configuració  ---
 AMPLADA, ALCADA = 800, 400
 FINESTRA = pygame.display.set_mode((AMPLADA, ALCADA))
 pygame.display.set_caption("🚀 Esquiva els meteorits")
@@ -41,8 +42,12 @@ MIDA_ESTRELLA = 3
 estrelles = []
 
 # Creem bala
-bales = []
+MIDA_BALA_AX = 5
+MIDA_BALA_AY = 20
 BALES_PER_FRAME = 10
+SHOOT_RATE = 1e9 / 4
+bales = []
+last_shot_time =  time.time_ns()
 
 
 # --- Bucle principal del joc ---
@@ -82,9 +87,12 @@ while True:
             nau.x -= VELOCITAT_NAU
 
     # Creem bales
-    if tecles[pygame.K_SPACE] and frame % BALES_PER_FRAME == 0:
-        bala = pygame.Rect(nau.x + NAU_AX/2 - 2, nau.y, 5, 20)
+    now = time.time_ns()
+
+    if tecles[pygame.K_SPACE] and  now - last_shot_time > SHOOT_RATE:
+        bala = pygame.Rect(nau.x + NAU_AX/2 - 2, nau.y, MIDA_BALA_AX, MIDA_BALA_AY)
         bales.append(bala)
+        last_shot_time =  time.time_ns()
 
     # Moviment meteorits
     for m, v in meteorits:
@@ -96,6 +104,10 @@ while True:
     # Moviment bala
     for b in bales:
         b.y -= VELOCITAT_BALA
+
+        # Esborrem la bala quan surt de la pantalla
+        if b.y < -MIDA_BALA_AY:
+            bales.remove(b)
 
     # 3️⃣ Dibuix a la pantalla
     FINESTRA.fill(NEGRE)                # Fons negre
